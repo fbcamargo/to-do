@@ -35,8 +35,24 @@ class UserController {
       return res.sendStatus(500);
     }
   }
-  async show({ request: { id: number } }, res: Response) {}
-  async destroy({ body: { id: number } }, res: Response) {}
+
+  async show(req: Request, res: Response) {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ error: "ID is required" });
+    const user = await this.userService.findById(Number(id));
+    if (!user) return res.sendStatus(404);
+    return res.status(200).json(UserResponseDtoSchema.parse(user));
+  }
+
+  async destroy(req: Request, res: Response) {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ error: "ID is required" });
+    const user = await this.userService.findById(Number(id));
+    if (!user) return res.sendStatus(404);
+    const result = await this.userService.destroy(Number(id));
+    if (!result) return res.status(400).json({ error: "Fail to delete user" });
+    return res.sendStatus(200);
+  }
 }
 
 export { UserController };

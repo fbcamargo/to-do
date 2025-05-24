@@ -18,8 +18,17 @@ class UserService {
       },
     });
   }
-  async show(id: number) {}
-  async destroy(id: number) {}
+  async findById(id: number): Promise<UserEntity> {
+    return await this.prismaClient.user.findUnique({
+      where: { id },
+      include: { tasks: true },
+    });
+  }
+  async destroy(id: number) {
+    return await this.prismaClient.user.delete({
+      where: { id },
+    });
+  }
 }
 
 export { UserService };
